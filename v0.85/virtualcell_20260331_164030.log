@@ -1,0 +1,169 @@
+16:40:30 [INFO] Log file: .\virtualcell_20260331_164030.log
+16:40:30 [INFO]   Unit length a = 1.6580
+16:40:30 [INFO]   Scaled: l_min=1.1109, l_max=2.2052, sigma_ch=0.9948
+16:40:31 [INFO]   Cell post-relax: bonds [1.4339, 1.7414] mean=1.6553
+16:40:31 [INFO]   Nuc post-relax: bonds [1.8582, 2.1013] mean=1.9798
+16:40:31 [INFO] VirtualCell simulation initialized
+16:40:31 [INFO]   Cell membrane: 642 verts, 1280 faces
+16:40:31 [INFO]   Nuclear envelope: 42 verts, 80 faces
+16:40:31 [INFO]   Cytoplasm: 772 nodes, 5463 edges
+16:40:31 [INFO]   Chromatin: 5 chains × 100 beads
+16:40:31 [INFO] ============================================================
+16:40:31 [INFO] PHASE 1: Suspended cell equilibration
+16:40:31 [INFO]   Steps: 30000, dt=0.0005
+16:40:31 [INFO] ============================================================
+16:40:31 [INFO] [Phase1] Step      0 | E=2336566968.06 | Cell bonds [1.361, 1.846] AR=1.001 R=11.00 | Nuc bonds [1.761, 2.186] AR=1.009 R=3.40
+16:40:37 [INFO] [Phase1] Step   1000 | E= 216610.95 | Cell bonds [1.121, 2.247] AR=1.016 R=11.00 | Nuc bonds [1.436, 2.299] AR=1.076 R=3.37
+16:40:43 [INFO] [Phase1] Step   2000 | E= 222935.42 | Cell bonds [1.172, 2.270] AR=1.017 R=11.00 | Nuc bonds [1.513, 2.301] AR=1.076 R=3.36
+16:40:49 [INFO] [Phase1] Step   3000 | E= 206230.56 | Cell bonds [1.159, 2.258] AR=1.020 R=11.00 | Nuc bonds [1.467, 2.324] AR=1.071 R=3.37
+16:40:54 [INFO] [Phase1] Step   4000 | E= 191298.43 | Cell bonds [1.167, 2.222] AR=1.013 R=11.01 | Nuc bonds [1.560, 2.285] AR=1.041 R=3.38
+16:41:00 [INFO] [Phase1] Step   5000 | E= 204023.26 | Cell bonds [1.179, 2.274] AR=1.008 R=11.01 | Nuc bonds [1.458, 2.250] AR=1.027 R=3.36
+16:41:06 [INFO] [Phase1] Step   6000 | E= 204312.86 | Cell bonds [1.138, 2.282] AR=1.009 R=11.00 | Nuc bonds [1.496, 2.322] AR=1.091 R=3.37
+16:41:12 [INFO] [Phase1] Step   7000 | E= 274298.76 | Cell bonds [1.209, 2.223] AR=1.007 R=11.01 | Nuc bonds [1.594, 2.354] AR=1.050 R=3.45
+16:41:18 [INFO] [Phase1] Step   8000 | E= 218092.85 | Cell bonds [1.129, 2.225] AR=1.014 R=11.00 | Nuc bonds [1.421, 2.408] AR=1.128 R=3.45
+16:41:24 [INFO] [Phase1] Step   9000 | E= 234682.50 | Cell bonds [1.140, 2.286] AR=1.015 R=11.00 | Nuc bonds [1.404, 2.401] AR=1.073 R=3.46
+16:41:30 [INFO] [Phase1] Step  10000 | E= 248766.70 | Cell bonds [1.186, 2.317] AR=1.008 R=11.00 | Nuc bonds [1.480, 2.445] AR=1.039 R=3.46
+16:41:35 [INFO] [Phase1] Step  11000 | E= 253620.07 | Cell bonds [1.056, 2.354] AR=1.018 R=11.00 | Nuc bonds [1.514, 2.355] AR=1.064 R=3.45
+16:41:42 [INFO] [Phase1] Step  12000 | E= 261765.50 | Cell bonds [1.131, 2.288] AR=1.019 R=11.00 | Nuc bonds [1.635, 2.368] AR=1.079 R=3.45
+16:41:48 [INFO] [Phase1] Step  13000 | E= 224932.63 | Cell bonds [1.154, 2.265] AR=1.021 R=11.00 | Nuc bonds [1.556, 2.349] AR=1.161 R=3.47
+16:41:55 [INFO] [Phase1] Step  14000 | E= 234591.16 | Cell bonds [1.187, 2.221] AR=1.027 R=11.01 | Nuc bonds [1.653, 2.384] AR=1.066 R=3.47
+16:42:01 [INFO] [Phase1] Step  15000 | E= 221496.42 | Cell bonds [1.155, 2.378] AR=1.023 R=11.01 | Nuc bonds [1.399, 2.390] AR=1.104 R=3.45
+16:42:08 [INFO] [Phase1] Step  16000 | E= 219018.28 | Cell bonds [1.193, 2.224] AR=1.025 R=11.00 | Nuc bonds [1.559, 2.404] AR=1.050 R=3.46
+16:42:15 [INFO] [Phase1] Step  17000 | E= 230716.48 | Cell bonds [1.126, 2.376] AR=1.021 R=11.00 | Nuc bonds [1.569, 2.377] AR=1.033 R=3.45
+16:42:21 [INFO] [Phase1] Step  18000 | E= 247343.65 | Cell bonds [1.131, 2.280] AR=1.027 R=11.01 | Nuc bonds [1.392, 2.436] AR=1.145 R=3.46
+16:42:28 [INFO] [Phase1] Step  19000 | E= 263736.86 | Cell bonds [1.131, 2.353] AR=1.020 R=11.01 | Nuc bonds [1.542, 2.425] AR=1.103 R=3.44
+16:42:35 [INFO] [Phase1] Step  20000 | E= 259202.58 | Cell bonds [1.154, 2.324] AR=1.023 R=11.00 | Nuc bonds [1.674, 2.378] AR=1.051 R=3.46
+16:42:41 [INFO] [Phase1] Step  21000 | E= 223902.53 | Cell bonds [1.130, 2.345] AR=1.014 R=11.00 | Nuc bonds [1.592, 2.380] AR=1.111 R=3.46
+16:42:48 [INFO] [Phase1] Step  22000 | E= 237216.99 | Cell bonds [1.121, 2.301] AR=1.019 R=10.99 | Nuc bonds [1.532, 2.382] AR=1.140 R=3.46
+16:42:55 [INFO] [Phase1] Step  23000 | E= 226845.91 | Cell bonds [1.151, 2.369] AR=1.014 R=11.00 | Nuc bonds [1.493, 2.326] AR=1.067 R=3.47
+16:43:02 [INFO] [Phase1] Step  24000 | E= 246733.38 | Cell bonds [1.094, 2.329] AR=1.014 R=11.01 | Nuc bonds [1.622, 2.375] AR=1.068 R=3.45
+16:43:08 [INFO] [Phase1] Step  25000 | E= 244355.71 | Cell bonds [1.149, 2.300] AR=1.012 R=11.00 | Nuc bonds [1.653, 2.336] AR=1.036 R=3.46
+16:43:15 [INFO] [Phase1] Step  26000 | E= 255928.77 | Cell bonds [1.175, 2.342] AR=1.018 R=11.00 | Nuc bonds [1.571, 2.344] AR=1.055 R=3.45
+16:43:22 [INFO] [Phase1] Step  27000 | E= 262616.27 | Cell bonds [1.145, 2.324] AR=1.017 R=11.00 | Nuc bonds [1.548, 2.350] AR=1.104 R=3.45
+16:43:29 [INFO] [Phase1] Step  28000 | E= 222111.07 | Cell bonds [1.122, 2.278] AR=1.023 R=11.00 | Nuc bonds [1.630, 2.405] AR=1.032 R=3.47
+16:43:35 [INFO] [Phase1] Step  29000 | E= 222026.11 | Cell bonds [1.060, 2.323] AR=1.025 R=11.00 | Nuc bonds [1.576, 2.367] AR=1.125 R=3.46
+16:43:42 [INFO] Phase 1 checkpoint saved: .\phase1_checkpoint.npz
+16:43:42 [INFO] Phase 1 HTML: .\VirtualCell_v085_phase1_20260331_164342.html
+16:43:42 [INFO] ============================================================
+16:43:42 [INFO] PHASE 2: Cell on grooved substrate
+16:43:42 [INFO]   Groove: w=6.632107028574811a, h=1.6580267571437028a
+16:43:42 [INFO]   Steps: 100000
+16:43:42 [INFO] ============================================================
+16:43:42 [INFO] Loading Phase 1 checkpoint...
+16:43:42 [INFO]   Substrate: 800 verts, 640 faces
+16:43:42 [INFO]   Cell placed at z=14.36 (bottom at z=3.32) above substrate
+16:43:42 [INFO] [Phase2] Step      0 | E= 220906.18 | Cell bonds [1.187, 2.292] AR=1.025 R=11.01 | Nuc bonds [1.546, 2.368] AR=1.043 R=3.45
+16:43:51 [INFO] [Phase2] Step   1000 | E= 244961.43 | Cell bonds [1.116, 2.462] AR=1.030 R=10.84 | Nuc bonds [1.517, 2.349] AR=1.059 R=3.45
+16:44:00 [INFO] [Phase2] Step   2000 | E= 179334.91 | Cell bonds [1.084, 2.469] AR=1.033 R=10.80 | Nuc bonds [1.406, 2.397] AR=1.256 R=3.40
+16:44:09 [INFO] [Phase2] Step   3000 | E= 194178.79 | Cell bonds [1.078, 2.492] AR=1.042 R=10.77 | Nuc bonds [1.608, 2.325] AR=1.068 R=3.39
+16:44:17 [INFO] [Phase2] Step   4000 | E= 245614.47 | Cell bonds [1.083, 2.527] AR=1.046 R=10.80 | Nuc bonds [1.551, 2.362] AR=1.088 R=3.46
+16:44:17 [WARNING] [Phase2] WARNING: Cell bond long (2.5267)
+16:44:25 [INFO] [Phase2] Step   5000 | E= 240461.38 | Cell bonds [1.091, 2.450] AR=1.053 R=10.79 | Nuc bonds [1.445, 2.368] AR=1.134 R=3.47
+16:44:32 [INFO] [Phase2] Step   6000 | E= 240978.26 | Cell bonds [1.052, 2.474] AR=1.057 R=10.80 | Nuc bonds [1.585, 2.358] AR=1.064 R=3.46
+16:44:40 [INFO] [Phase2] Step   7000 | E= 238724.86 | Cell bonds [1.144, 2.450] AR=1.073 R=10.81 | Nuc bonds [1.515, 2.352] AR=1.090 R=3.45
+16:44:48 [INFO] [Phase2] Step   8000 | E= 228357.52 | Cell bonds [1.105, 2.450] AR=1.086 R=10.79 | Nuc bonds [1.651, 2.386] AR=1.032 R=3.47
+16:44:55 [INFO] [Phase2] Step   9000 | E= 218917.60 | Cell bonds [1.101, 2.460] AR=1.102 R=10.82 | Nuc bonds [1.539, 2.482] AR=1.080 R=3.46
+16:45:03 [INFO] [Phase2] Step  10000 | E= 232913.67 | Cell bonds [1.141, 2.462] AR=1.116 R=10.85 | Nuc bonds [1.668, 2.390] AR=1.089 R=3.45
+16:45:11 [INFO] [Phase2] Step  11000 | E= 235757.77 | Cell bonds [1.076, 2.466] AR=1.150 R=10.87 | Nuc bonds [1.486, 2.381] AR=1.046 R=3.46
+16:45:19 [INFO] [Phase2] Step  12000 | E= 261222.87 | Cell bonds [1.094, 2.442] AR=1.158 R=10.89 | Nuc bonds [1.543, 2.353] AR=1.079 R=3.45
+16:45:26 [INFO] [Phase2] Step  13000 | E= 233088.90 | Cell bonds [1.074, 2.471] AR=1.189 R=10.91 | Nuc bonds [1.603, 2.381] AR=1.045 R=3.46
+16:45:34 [INFO] [Phase2] Step  14000 | E= 221386.54 | Cell bonds [1.133, 2.477] AR=1.208 R=10.95 | Nuc bonds [1.502, 2.385] AR=1.063 R=3.47
+16:45:42 [INFO] [Phase2] Step  15000 | E= 233761.87 | Cell bonds [1.170, 2.491] AR=1.231 R=11.00 | Nuc bonds [1.641, 2.342] AR=1.047 R=3.46
+16:45:50 [INFO] [Phase2] Step  16000 | E= 280826.29 | Cell bonds [1.165, 2.467] AR=1.242 R=11.02 | Nuc bonds [1.575, 2.413] AR=1.069 R=3.46
+16:45:57 [INFO] [Phase2] Step  17000 | E= 269666.49 | Cell bonds [1.126, 2.487] AR=1.269 R=11.04 | Nuc bonds [1.553, 2.407] AR=1.185 R=3.45
+16:46:05 [INFO] [Phase2] Step  18000 | E= 232111.89 | Cell bonds [1.082, 2.484] AR=1.297 R=11.05 | Nuc bonds [1.532, 2.350] AR=1.023 R=3.44
+16:46:13 [INFO] [Phase2] Step  19000 | E= 255681.52 | Cell bonds [1.121, 2.478] AR=1.300 R=11.06 | Nuc bonds [1.605, 2.474] AR=1.152 R=3.44
+16:46:21 [INFO] [Phase2] Step  20000 | E= 272437.79 | Cell bonds [1.087, 2.480] AR=1.308 R=11.08 | Nuc bonds [1.577, 2.285] AR=1.057 R=3.43
+16:46:28 [INFO] [Phase2] Step  21000 | E= 205944.71 | Cell bonds [1.089, 2.452] AR=1.314 R=11.08 | Nuc bonds [1.583, 2.351] AR=1.074 R=3.46
+16:46:36 [INFO] [Phase2] Step  22000 | E= 223974.54 | Cell bonds [1.159, 2.452] AR=1.317 R=11.08 | Nuc bonds [1.284, 2.381] AR=1.201 R=3.46
+16:46:44 [INFO] [Phase2] Step  23000 | E= 217597.80 | Cell bonds [1.134, 2.429] AR=1.318 R=11.06 | Nuc bonds [1.511, 2.410] AR=1.064 R=3.47
+16:46:52 [INFO] [Phase2] Step  24000 | E= 230925.83 | Cell bonds [1.101, 2.470] AR=1.319 R=11.04 | Nuc bonds [1.665, 2.398] AR=1.039 R=3.46
+16:46:59 [INFO] [Phase2] Step  25000 | E= 244327.05 | Cell bonds [1.094, 2.482] AR=1.332 R=11.03 | Nuc bonds [1.561, 2.409] AR=1.126 R=3.46
+16:47:07 [INFO] [Phase2] Step  26000 | E= 198615.48 | Cell bonds [1.048, 2.460] AR=1.336 R=11.02 | Nuc bonds [1.465, 2.412] AR=1.076 R=3.48
+16:47:15 [INFO] [Phase2] Step  27000 | E= 223494.95 | Cell bonds [1.018, 2.524] AR=1.341 R=11.01 | Nuc bonds [1.539, 2.384] AR=1.077 R=3.46
+16:47:15 [WARNING] [Phase2] WARNING: Cell bond long (2.5242)
+16:47:23 [INFO] [Phase2] Step  28000 | E= 207936.61 | Cell bonds [1.026, 2.427] AR=1.339 R=11.01 | Nuc bonds [1.586, 2.342] AR=1.072 R=3.46
+16:47:30 [INFO] [Phase2] Step  29000 | E= 253174.95 | Cell bonds [1.088, 2.484] AR=1.344 R=11.00 | Nuc bonds [1.497, 2.447] AR=1.050 R=3.45
+16:47:38 [INFO] [Phase2] Step  30000 | E= 266104.74 | Cell bonds [1.018, 2.429] AR=1.348 R=10.95 | Nuc bonds [1.588, 2.414] AR=1.107 R=3.44
+16:47:46 [INFO] [Phase2] Step  31000 | E= 253013.65 | Cell bonds [1.079, 2.511] AR=1.356 R=10.94 | Nuc bonds [1.371, 2.390] AR=1.099 R=3.44
+16:47:46 [WARNING] [Phase2] WARNING: Cell bond long (2.5114)
+16:47:54 [INFO] [Phase2] Step  32000 | E= 238726.15 | Cell bonds [1.039, 2.443] AR=1.348 R=10.92 | Nuc bonds [1.638, 2.408] AR=1.041 R=3.46
+16:48:01 [INFO] [Phase2] Step  33000 | E= 235212.99 | Cell bonds [1.084, 2.465] AR=1.347 R=10.92 | Nuc bonds [1.442, 2.387] AR=1.082 R=3.45
+16:48:09 [INFO] [Phase2] Step  34000 | E= 236997.40 | Cell bonds [1.057, 2.452] AR=1.342 R=10.93 | Nuc bonds [1.490, 2.368] AR=1.058 R=3.46
+16:48:17 [INFO] [Phase2] Step  35000 | E= 216922.49 | Cell bonds [1.133, 2.455] AR=1.347 R=10.93 | Nuc bonds [1.403, 2.409] AR=1.141 R=3.46
+16:48:25 [INFO] [Phase2] Step  36000 | E= 206112.59 | Cell bonds [1.102, 2.447] AR=1.343 R=10.92 | Nuc bonds [1.681, 2.361] AR=1.021 R=3.46
+16:48:32 [INFO] [Phase2] Step  37000 | E= 215763.36 | Cell bonds [1.090, 2.411] AR=1.348 R=10.93 | Nuc bonds [1.640, 2.437] AR=1.210 R=3.47
+16:48:40 [INFO] [Phase2] Step  38000 | E= 249197.62 | Cell bonds [1.043, 2.477] AR=1.371 R=10.98 | Nuc bonds [1.639, 2.370] AR=1.094 R=3.45
+16:48:48 [INFO] [Phase2] Step  39000 | E= 215459.96 | Cell bonds [1.073, 2.458] AR=1.366 R=11.00 | Nuc bonds [1.470, 2.362] AR=1.112 R=3.46
+16:48:56 [INFO] [Phase2] Step  40000 | E= 221277.93 | Cell bonds [0.994, 2.495] AR=1.374 R=10.96 | Nuc bonds [1.587, 2.407] AR=1.087 R=3.46
+16:49:04 [INFO] [Phase2] Step  41000 | E= 245745.43 | Cell bonds [1.013, 2.486] AR=1.373 R=10.94 | Nuc bonds [1.547, 2.293] AR=1.022 R=3.45
+16:49:11 [INFO] [Phase2] Step  42000 | E= 228598.70 | Cell bonds [1.000, 2.444] AR=1.374 R=10.94 | Nuc bonds [1.639, 2.385] AR=1.020 R=3.46
+16:49:19 [INFO] [Phase2] Step  43000 | E= 201505.22 | Cell bonds [1.038, 2.442] AR=1.375 R=10.95 | Nuc bonds [1.508, 2.393] AR=1.054 R=3.47
+16:49:27 [INFO] [Phase2] Step  44000 | E= 215031.33 | Cell bonds [1.077, 2.437] AR=1.374 R=10.94 | Nuc bonds [1.511, 2.425] AR=1.060 R=3.46
+16:49:35 [INFO] [Phase2] Step  45000 | E= 234902.65 | Cell bonds [1.024, 2.426] AR=1.381 R=10.93 | Nuc bonds [1.495, 2.440] AR=1.129 R=3.47
+16:49:42 [INFO] [Phase2] Step  46000 | E= 252640.33 | Cell bonds [1.053, 2.505] AR=1.383 R=10.92 | Nuc bonds [1.482, 2.382] AR=1.068 R=3.46
+16:49:50 [INFO] [Phase2] Step  47000 | E= 221765.75 | Cell bonds [1.039, 2.458] AR=1.374 R=10.92 | Nuc bonds [1.599, 2.455] AR=1.077 R=3.47
+16:49:58 [INFO] [Phase2] Step  48000 | E= 218967.54 | Cell bonds [1.078, 2.451] AR=1.364 R=10.88 | Nuc bonds [1.419, 2.434] AR=1.038 R=3.46
+16:50:06 [INFO] [Phase2] Step  49000 | E= 208312.76 | Cell bonds [1.084, 2.469] AR=1.359 R=10.84 | Nuc bonds [1.692, 2.339] AR=1.075 R=3.48
+16:50:10 [WARNING] [Phase2] WARNING: Cell bond long (2.5124)
+16:50:14 [INFO] [Phase2] Step  50000 | E= 207497.05 | Cell bonds [1.049, 2.455] AR=1.370 R=10.84 | Nuc bonds [1.491, 2.387] AR=1.046 R=3.46
+16:50:21 [INFO] [Phase2] Step  51000 | E= 211439.71 | Cell bonds [1.036, 2.422] AR=1.376 R=10.83 | Nuc bonds [1.641, 2.341] AR=1.049 R=3.47
+16:50:29 [INFO] [Phase2] Step  52000 | E= 215192.30 | Cell bonds [1.079, 2.480] AR=1.370 R=10.80 | Nuc bonds [1.588, 2.402] AR=1.089 R=3.46
+16:50:37 [INFO] [Phase2] Step  53000 | E= 253669.59 | Cell bonds [0.972, 2.499] AR=1.374 R=10.76 | Nuc bonds [1.602, 2.345] AR=1.112 R=3.45
+16:50:45 [INFO] [Phase2] Step  54000 | E= 254340.90 | Cell bonds [1.021, 2.451] AR=1.378 R=10.78 | Nuc bonds [1.653, 2.355] AR=1.052 R=3.46
+16:50:53 [INFO] [Phase2] Step  55000 | E= 229843.01 | Cell bonds [1.029, 2.469] AR=1.379 R=10.77 | Nuc bonds [1.573, 2.358] AR=1.048 R=3.44
+16:51:00 [INFO] [Phase2] Step  56000 | E= 217904.12 | Cell bonds [1.056, 2.465] AR=1.363 R=10.75 | Nuc bonds [1.388, 2.509] AR=1.081 R=3.46
+16:51:08 [INFO] [Phase2] Step  57000 | E= 230996.18 | Cell bonds [1.075, 2.438] AR=1.356 R=10.74 | Nuc bonds [1.475, 2.370] AR=1.107 R=3.45
+16:51:16 [INFO] [Phase2] Step  58000 | E= 224266.75 | Cell bonds [1.028, 2.484] AR=1.352 R=10.75 | Nuc bonds [1.472, 2.378] AR=1.050 R=3.45
+16:51:24 [INFO] [Phase2] Step  59000 | E= 246557.40 | Cell bonds [1.079, 2.444] AR=1.342 R=10.75 | Nuc bonds [1.554, 2.406] AR=1.041 R=3.45
+16:51:32 [INFO] [Phase2] Step  60000 | E= 244813.96 | Cell bonds [1.081, 2.475] AR=1.339 R=10.76 | Nuc bonds [1.582, 2.400] AR=1.011 R=3.46
+16:51:39 [INFO] [Phase2] Step  61000 | E= 260039.07 | Cell bonds [1.059, 2.478] AR=1.345 R=10.78 | Nuc bonds [1.502, 2.357] AR=1.055 R=3.44
+16:51:47 [INFO] [Phase2] Step  62000 | E= 238671.13 | Cell bonds [1.063, 2.525] AR=1.353 R=10.79 | Nuc bonds [1.448, 2.313] AR=1.051 R=3.46
+16:51:47 [WARNING] [Phase2] WARNING: Cell bond long (2.5252)
+16:51:55 [INFO] [Phase2] Step  63000 | E= 247868.27 | Cell bonds [1.041, 2.482] AR=1.356 R=10.77 | Nuc bonds [1.610, 2.413] AR=1.093 R=3.45
+16:52:03 [INFO] [Phase2] Step  64000 | E= 251355.75 | Cell bonds [0.994, 2.499] AR=1.350 R=10.77 | Nuc bonds [1.655, 2.442] AR=1.105 R=3.45
+16:52:10 [INFO] [Phase2] Step  65000 | E= 228083.59 | Cell bonds [1.057, 2.455] AR=1.336 R=10.79 | Nuc bonds [1.553, 2.365] AR=1.113 R=3.46
+16:52:14 [WARNING] [Phase2] WARNING: Cell bond long (2.5156)
+16:52:18 [INFO] [Phase2] Step  66000 | E= 223525.28 | Cell bonds [1.070, 2.467] AR=1.339 R=10.79 | Nuc bonds [1.479, 2.414] AR=1.098 R=3.45
+16:52:26 [INFO] [Phase2] Step  67000 | E= 220026.41 | Cell bonds [1.027, 2.478] AR=1.342 R=10.79 | Nuc bonds [1.516, 2.396] AR=1.116 R=3.46
+16:52:34 [INFO] [Phase2] Step  68000 | E= 225218.19 | Cell bonds [1.081, 2.435] AR=1.358 R=10.78 | Nuc bonds [1.594, 2.411] AR=1.132 R=3.45
+16:52:42 [INFO] [Phase2] Step  69000 | E= 187054.34 | Cell bonds [1.095, 2.471] AR=1.365 R=10.78 | Nuc bonds [1.592, 2.414] AR=1.094 R=3.38
+16:52:49 [INFO] [Phase2] Step  70000 | E= 194929.89 | Cell bonds [1.069, 2.498] AR=1.365 R=10.82 | Nuc bonds [1.530, 2.315] AR=1.066 R=3.37
+16:52:57 [INFO] [Phase2] Step  71000 | E= 179486.61 | Cell bonds [1.076, 2.424] AR=1.366 R=10.81 | Nuc bonds [1.590, 2.298] AR=1.063 R=3.38
+16:53:01 [WARNING] [Phase2] WARNING: Cell bond long (2.5095)
+16:53:05 [INFO] [Phase2] Step  72000 | E= 185339.43 | Cell bonds [1.021, 2.471] AR=1.355 R=10.77 | Nuc bonds [1.481, 2.329] AR=1.061 R=3.39
+16:53:13 [INFO] [Phase2] Step  73000 | E= 181883.99 | Cell bonds [1.047, 2.445] AR=1.353 R=10.78 | Nuc bonds [1.532, 2.416] AR=1.132 R=3.38
+16:53:21 [INFO] [Phase2] Step  74000 | E= 200525.47 | Cell bonds [1.054, 2.459] AR=1.344 R=10.79 | Nuc bonds [1.591, 2.285] AR=1.074 R=3.38
+16:53:28 [INFO] [Phase2] Step  75000 | E= 193067.96 | Cell bonds [1.053, 2.449] AR=1.351 R=10.79 | Nuc bonds [1.602, 2.361] AR=1.075 R=3.39
+16:53:36 [INFO] [Phase2] Step  76000 | E= 187231.57 | Cell bonds [1.072, 2.480] AR=1.364 R=10.80 | Nuc bonds [1.472, 2.337] AR=1.137 R=3.38
+16:53:44 [INFO] [Phase2] Step  77000 | E= 192903.02 | Cell bonds [1.085, 2.483] AR=1.358 R=10.77 | Nuc bonds [1.626, 2.296] AR=1.064 R=3.39
+16:53:52 [INFO] [Phase2] Step  78000 | E= 188683.79 | Cell bonds [1.015, 2.494] AR=1.365 R=10.76 | Nuc bonds [1.461, 2.320] AR=1.088 R=3.39
+16:54:00 [INFO] [Phase2] Step  79000 | E= 216739.19 | Cell bonds [1.053, 2.470] AR=1.366 R=10.77 | Nuc bonds [1.660, 2.317] AR=1.063 R=3.37
+16:54:07 [INFO] [Phase2] Step  80000 | E= 191439.45 | Cell bonds [1.062, 2.490] AR=1.378 R=10.75 | Nuc bonds [1.537, 2.375] AR=1.059 R=3.37
+16:54:15 [INFO] [Phase2] Step  81000 | E= 196322.33 | Cell bonds [1.085, 2.474] AR=1.381 R=10.75 | Nuc bonds [1.563, 2.349] AR=1.083 R=3.37
+16:54:23 [INFO] [Phase2] Step  82000 | E= 204995.40 | Cell bonds [1.073, 2.457] AR=1.377 R=10.77 | Nuc bonds [1.592, 2.294] AR=1.099 R=3.37
+16:54:31 [INFO] [Phase2] Step  83000 | E= 252353.17 | Cell bonds [1.026, 2.488] AR=1.384 R=10.77 | Nuc bonds [1.476, 2.380] AR=1.074 R=3.43
+16:54:39 [INFO] [Phase2] Step  84000 | E= 219848.02 | Cell bonds [1.044, 2.460] AR=1.369 R=10.73 | Nuc bonds [1.467, 2.382] AR=1.273 R=3.47
+16:54:47 [INFO] [Phase2] Step  85000 | E= 265697.85 | Cell bonds [1.017, 2.461] AR=1.363 R=10.75 | Nuc bonds [1.602, 2.308] AR=1.083 R=3.44
+16:54:54 [INFO] [Phase2] Step  86000 | E= 238376.06 | Cell bonds [1.067, 2.472] AR=1.355 R=10.73 | Nuc bonds [1.590, 2.415] AR=1.075 R=3.45
+16:55:02 [INFO] [Phase2] Step  87000 | E= 234936.36 | Cell bonds [1.034, 2.498] AR=1.346 R=10.73 | Nuc bonds [1.556, 2.438] AR=1.032 R=3.44
+16:55:06 [WARNING] [Phase2] WARNING: Cell bond long (2.5419)
+16:55:10 [INFO] [Phase2] Step  88000 | E= 222369.42 | Cell bonds [1.078, 2.474] AR=1.341 R=10.75 | Nuc bonds [1.618, 2.370] AR=1.055 R=3.46
+16:55:18 [INFO] [Phase2] Step  89000 | E= 216687.99 | Cell bonds [0.986, 2.537] AR=1.361 R=10.75 | Nuc bonds [1.487, 2.384] AR=1.051 R=3.46
+16:55:18 [WARNING] [Phase2] WARNING: Cell bond long (2.5368)
+16:55:22 [WARNING] [Phase2] WARNING: Cell bond long (2.5172)
+16:55:25 [INFO] [Phase2] Step  90000 | E= 215510.92 | Cell bonds [1.091, 2.525] AR=1.350 R=10.74 | Nuc bonds [1.589, 2.383] AR=1.110 R=3.47
+16:55:25 [WARNING] [Phase2] WARNING: Cell bond long (2.5252)
+16:55:33 [INFO] [Phase2] Step  91000 | E= 225628.91 | Cell bonds [1.087, 2.475] AR=1.337 R=10.73 | Nuc bonds [1.572, 2.406] AR=1.062 R=3.47
+16:55:41 [INFO] [Phase2] Step  92000 | E= 222555.35 | Cell bonds [1.056, 2.512] AR=1.332 R=10.71 | Nuc bonds [1.604, 2.330] AR=1.040 R=3.45
+16:55:41 [WARNING] [Phase2] WARNING: Cell bond long (2.5121)
+16:55:49 [INFO] [Phase2] Step  93000 | E= 216793.79 | Cell bonds [1.048, 2.476] AR=1.339 R=10.73 | Nuc bonds [1.522, 2.453] AR=1.145 R=3.45
+16:55:57 [INFO] [Phase2] Step  94000 | E= 240603.53 | Cell bonds [1.049, 2.456] AR=1.352 R=10.76 | Nuc bonds [1.532, 2.397] AR=1.163 R=3.44
+16:56:04 [INFO] [Phase2] Step  95000 | E= 227014.19 | Cell bonds [1.030, 2.466] AR=1.349 R=10.75 | Nuc bonds [1.597, 2.405] AR=1.052 R=3.45
+16:56:12 [INFO] [Phase2] Step  96000 | E= 231359.82 | Cell bonds [1.073, 2.461] AR=1.364 R=10.77 | Nuc bonds [1.483, 2.331] AR=1.069 R=3.46
+16:56:20 [INFO] [Phase2] Step  97000 | E= 230843.21 | Cell bonds [1.033, 2.475] AR=1.358 R=10.78 | Nuc bonds [1.575, 2.398] AR=1.085 R=3.45
+16:56:28 [INFO] [Phase2] Step  98000 | E= 235030.02 | Cell bonds [1.043, 2.510] AR=1.339 R=10.76 | Nuc bonds [1.504, 2.390] AR=1.051 R=3.46
+16:56:28 [WARNING] [Phase2] WARNING: Cell bond long (2.5097)
+16:56:36 [INFO] [Phase2] Step  99000 | E= 213692.44 | Cell bonds [1.041, 2.462] AR=1.331 R=10.77 | Nuc bonds [1.620, 2.372] AR=1.083 R=3.46
+16:56:44 [INFO] Chromatin contacts (P>0.5): 16074
+16:56:44 [INFO] Phase 2 HTML: .\VirtualCell_v085_phase2_20260331_165644.html
