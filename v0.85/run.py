@@ -27,7 +27,7 @@ def main():
                         help='Groove depth h in units of a')
     parser.add_argument('--steps1', type=int, default=100000,
                         help='Number of steps for Phase 1')
-    parser.add_argument('--steps2', type=int, default=100000,
+    parser.add_argument('--steps2', type=int, default=150000,
                         help='Number of steps for Phase 2')
     parser.add_argument('--dt', type=float, default=0.0005,
                         help='Timestep')

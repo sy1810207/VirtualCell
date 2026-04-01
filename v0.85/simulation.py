@@ -216,15 +216,17 @@ class VirtualCellSimulation:
         f_cyt += steric_sphere_confinement(
             self.cyt_positions, nuc_center, nuc_radius, inside=False, config=cfg)
 
-        # Steric: cytoplasm inside cell
+        # Steric: cytoplasm inside cell (spherical approximation for forces;
+        # hard directional projection applied in _update_positions)
         cell_center = self.cell_vertices.mean(axis=0)
         cell_radius = compute_mean_radius(self.cell_vertices, cell_center)
         f_cyt += steric_sphere_confinement(
             self.cyt_positions, cell_center, cell_radius, inside=True, config=cfg)
 
-        # Steric: nucleus inside cell
-        f_nuc += steric_nucleus_in_cell(
-            self.nuc_vertices, cell_center, cell_radius, cfg)
+        # Steric: nucleus inside cell (spherical for forces;
+        # hard directional projection in _update_positions)
+        f_nuc += steric_sphere_confinement(
+            self.nuc_vertices, cell_center, cell_radius, inside=True, config=cfg)
 
         # Transfer forces from anchored cytoplasm nodes to membrane nodes
         f_cell, f_nuc = self._transfer_anchor_forces(
@@ -244,8 +246,8 @@ class VirtualCellSimulation:
         f_cell, f_nuc, f_cyt, f_chains, total_energy = self._compute_forces_phase1()
         cfg = self.cfg
 
-        # Gravity: gentle downward force for settlement
-        grav = 0.3 * cfg.kBT
+        # Gravity: downward force for spreading and groove entry
+        grav = 1.5 * cfg.kBT
         f_cell[:, 2] -= grav
         f_nuc[:, 2] -= grav
         f_cyt[:, 2] -= grav
@@ -276,6 +278,32 @@ class VirtualCellSimulation:
         f_nuc += f_nuc_sub
 
         return f_cell, f_nuc, f_cyt, f_chains, total_energy
+
+    @staticmethod
+    def _directional_confinement(positions, cell_vertices, cfg, fraction=0.90):
+        """Push points inward when they exceed `fraction` of cell radius in their direction."""
+        N = len(positions)
+        forces = np.zeros((N, 3), dtype=float)
+        cell_center = cell_vertices.mean(axis=0)
+        cell_rel = cell_vertices - cell_center
+
+        pos_rel = positions - cell_center
+        pos_dist = np.linalg.norm(pos_rel, axis=1, keepdims=True)
+        pos_hat = pos_rel / np.maximum(pos_dist, 1e-10)
+
+        # Cell radius in each point's direction
+        dots = pos_hat @ cell_rel.T  # (N, N_cv)
+        max_dots = np.max(dots, axis=1, keepdims=True)
+
+        limit = max_dots * fraction
+        penetration = pos_dist - limit
+        mask_flat = (penetration > 0).ravel()
+        if np.any(mask_flat):
+            pen = penetration[mask_flat]
+            f_mag = -cfg.k_steric * pen  # (M, 1)
+            forces[mask_flat] += f_mag * pos_hat[mask_flat]
+
+        return forces
 
     def _transfer_anchor_forces(self, f_cell, f_nuc, f_cyt):
         """Transfer forces between anchored cytoplasm nodes and membrane nodes."""
@@ -343,6 +371,39 @@ class VirtualCellSimulation:
                                  nuc_radius * 0.9 / np.maximum(dist, 1e-10),
                                  1.0)
                 self.chains[i] = nuc_center + dr * scale
+
+        # ── Directional confinement: keep nucleus and cytoplasm inside cell ──
+        # Use actual cell shape (not spherical approximation)
+        cell_center = self.cell_vertices.mean(axis=0)
+        cell_rel = self.cell_vertices - cell_center
+
+        # Nucleus: confine within 75% of cell radius in each direction
+        nuc_rel = self.nuc_vertices - cell_center
+        nuc_dist = np.linalg.norm(nuc_rel, axis=1, keepdims=True)
+        nuc_hat = nuc_rel / np.maximum(nuc_dist, 1e-10)
+        dots_nuc = nuc_hat @ cell_rel.T
+        max_nuc = np.max(dots_nuc, axis=1, keepdims=True)
+        limit_nuc = max_nuc * 0.75
+        too_far_nuc = nuc_dist > limit_nuc
+        if np.any(too_far_nuc):
+            scale_nuc = np.where(too_far_nuc,
+                                 limit_nuc * 0.95 / np.maximum(nuc_dist, 1e-10),
+                                 1.0)
+            self.nuc_vertices = cell_center + nuc_rel * scale_nuc
+
+        # Cytoplasm: confine within 90% of cell radius in each direction
+        cyt_rel = self.cyt_positions - cell_center
+        cyt_dist = np.linalg.norm(cyt_rel, axis=1, keepdims=True)
+        cyt_hat = cyt_rel / np.maximum(cyt_dist, 1e-10)
+        dots_cyt = cyt_hat @ cell_rel.T
+        max_cyt = np.max(dots_cyt, axis=1, keepdims=True)
+        limit_cyt = max_cyt * 0.90
+        too_far_cyt = cyt_dist > limit_cyt
+        if np.any(too_far_cyt):
+            scale_cyt = np.where(too_far_cyt,
+                                 limit_cyt * 0.95 / np.maximum(cyt_dist, 1e-10),
+                                 1.0)
+            self.cyt_positions = cell_center + cyt_rel * scale_cyt
 
         # Hard floor: keep nucleus, cytoplasm, and chromatin above substrate
         if self.sub_vertices is not None:
@@ -441,8 +502,9 @@ class VirtualCellSimulation:
         if cell_max > warn_max:
             log.warning(f'[{phase}] WARNING: Cell bond long ({cell_max:.4f})')
 
-        # Collapse detection
-        if cell_r < cfg.R_cell * 0.5:
+        # Collapse detection (relaxed in Phase 2 — cell flattens when spreading)
+        collapse_thresh = 0.3 if phase == 'Phase2' else 0.5
+        if cell_r < cfg.R_cell * collapse_thresh:
             log.warning(f'[{phase}] STOP: Cell collapsing (R={cell_r:.2f}, '
                         f'initial={cfg.R_cell:.2f}) at step {step}')
             return True

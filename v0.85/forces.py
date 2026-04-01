@@ -506,11 +506,13 @@ def chromatin_forces(chains, config: SimConfig):
 def cell_ecm_forces(cell_vertices, cell_faces,
                     sub_vertices, sub_faces, config: SimConfig):
     """
-    LJ 10-4 interaction between cell membrane and substrate.
-    Uses perpendicular distance from membrane face centroids to substrate surface.
-    For a rigid grooved substrate along y-axis, the substrate is essentially
-    a height-field in xz, so we compute d_perp as the vertical distance to
-    the closest substrate face.
+    Harmonic tethering of cell membrane to substrate surface.
+
+    Each cell face within adhesion range is pulled toward a target height
+    (sigma_perp) above the local substrate surface. This ensures:
+    - Faces over ridges settle at target height above ridge
+    - Faces over grooves are pulled DOWN into the groove
+    - Force is proportional to displacement from target → strong groove pull
 
     Returns (forces_on_cell_vertices: (N_cv, 3), energy: float)
     """
@@ -518,8 +520,8 @@ def cell_ecm_forces(cell_vertices, cell_faces,
     forces = np.zeros((N_cv, 3), dtype=float)
     energy = 0.0
 
-    sigma = config.sigma_perp
-    eps_ecm = config.epsilon_ECM
+    d_target = config.sigma_perp   # target height above substrate surface
+    k_adhere = config.epsilon_ECM  # spring constant for adhesion
 
     # Compute cell face centroids
     c0 = cell_vertices[cell_faces[:, 0]]
@@ -527,47 +529,44 @@ def cell_ecm_forces(cell_vertices, cell_faces,
     c2 = cell_vertices[cell_faces[:, 2]]
     centroids = (c0 + c1 + c2) / 3.0  # (N_cf, 3)
 
-    # For grooved substrate: compute height at each centroid's (x,y) position
-    # The substrate is a height-field; find closest substrate face and its z
+    # Substrate face centroids
     sub_centroids = (sub_vertices[sub_faces[:, 0]] +
                      sub_vertices[sub_faces[:, 1]] +
                      sub_vertices[sub_faces[:, 2]]) / 3.0
 
-    # Use 2D KDTree (x,y) to find nearest substrate face for each cell face
+    # Find substrate surface directly below each cell face
     tree_2d = cKDTree(sub_centroids[:, :2])
     _, nearest_idx = tree_2d.query(centroids[:, :2], k=1)
 
-    # Perpendicular distance: z of centroid minus z of substrate at that point
-    sub_z = sub_centroids[nearest_idx, 2]
-    d_perp = centroids[:, 2] - sub_z
-    d_perp = np.maximum(d_perp, 0.3 * sigma)  # clamp for stability
+    sub_z_below = sub_centroids[nearest_idx, 2]
+    target_z = sub_z_below + d_target
 
-    # Only interact if within cutoff
-    cutoff = 5.0 * sigma
-    mask = d_perp < cutoff
+    # Height above target
+    displacement = centroids[:, 2] - target_z
+
+    # Only act on faces within adhesion range (above substrate, within cutoff)
+    adhesion_cutoff = config.R_cell * 0.5  # half cell radius
+    mask = (displacement > -d_target) & (displacement < adhesion_cutoff)
 
     if np.any(mask):
-        d = d_perp[mask]
-        sd4 = (sigma / d)**4
-        sd10 = (sigma / d)**10
+        disp = displacement[mask]
 
-        # U = 4ε [(σ/d)^10 - (σ/d)^4]
-        U = 4.0 * eps_ecm * (sd10 - sd4)
+        # U = (k/2) * displacement^2
+        U = 0.5 * k_adhere * disp**2
         energy = float(np.sum(U))
 
-        # F_z = -dU/dd = 4ε [10σ^10/d^11 - 4σ^4/d^5]
-        #     = 4ε/d [10(σ/d)^10 - 4(σ/d)^4]
-        f_z = 4.0 * eps_ecm / d * (10.0 * sd10 - 4.0 * sd4)
+        # F_z = -k * displacement (pulls toward target)
+        f_z = -k_adhere * disp
 
-        # Distribute force from face centroid to its 3 vertices (equal weight)
+        # Force is purely vertical
+        f_vec = np.zeros((np.sum(mask), 3), dtype=float)
+        f_vec[:, 2] = f_z
+
+        # Distribute force from face centroid to its 3 vertices
         masked_faces = cell_faces[mask]
-        f_per_vert = f_z / 3.0
-        for dim_idx in [2]:  # force is along z only for height-field substrate
-            fv = np.zeros(N_cv, dtype=float)
-            np.add.at(fv, masked_faces[:, 0], f_per_vert)
-            np.add.at(fv, masked_faces[:, 1], f_per_vert)
-            np.add.at(fv, masked_faces[:, 2], f_per_vert)
-            forces[:, dim_idx] += fv
+        f_per_vert = f_vec / 3.0
+        for k in range(3):
+            np.add.at(forces, masked_faces[:, k], f_per_vert)
 
     return forces, energy
 
@@ -594,13 +593,16 @@ def active_forces(cell_vertices, cell_faces, sub_vertices, sub_faces,
     _, nearest_idx = tree_2d.query(cell_vertices[:, :2], k=1)
     sub_z = sub_centroids[nearest_idx, 2]
 
-    # Height above substrate — act on lower hemisphere
+    # Height above substrate — act on lower 75% of cell (most of the cell)
     height = cell_vertices[:, 2] - sub_z
-    cell_center_z = cell_vertices[:, 2].mean()
-    threshold = cell_center_z - sub_z.mean()  # everything below cell center
+    cell_z_min = cell_vertices[:, 2].min()
+    cell_z_max = cell_vertices[:, 2].max()
+    cell_height = max(cell_z_max - cell_z_min, EPS)
+    # Act on all vertices below 75% of total cell height
+    threshold = cell_z_min + 0.75 * cell_height
 
-    # Select vertices near substrate
-    near_mask = (height > 0) & (height < threshold)
+    # Select vertices in active zone
+    near_mask = (height > 0) & (cell_vertices[:, 2] < threshold)
     near_idx = np.where(near_mask)[0]
 
     if len(near_idx) == 0:
@@ -624,27 +626,23 @@ def active_forces(cell_vertices, cell_faces, sub_vertices, sub_faces,
     vn_norms = np.linalg.norm(vert_normals, axis=1, keepdims=True)
     vert_normals /= np.maximum(vn_norms, EPS)
 
-    # Active force direction: along local curvature vector (outward normal)
-    # Per paper: "alignment is parallel to the local curvature vector of the membrane"
-    # Project to horizontal plane for vertices near substrate to promote
-    # lateral spreading (not pushing into substrate)
-    f_active_vec = config.F_active * vert_normals[near_idx]
-    # For vertices close to substrate, zero the z-component to prevent
-    # pushing into substrate; scale lateral force up to compensate
+    # Active force: outward along vertex normal, projected to horizontal
+    # for vertices near substrate to promote lateral spreading
+    f_active_vec = config.F_active * vert_normals[near_idx].copy()
     h_near = height[near_idx]
-    # Smooth transition: fully horizontal below sigma_perp, fully 3D above 3*sigma_perp
-    z_blend = np.clip((h_near - config.sigma_perp) / (2.0 * config.sigma_perp), 0.0, 1.0)
+    # Smooth transition: fully horizontal below 2*sigma_perp, fully 3D above 6*sigma_perp
+    z_blend = np.clip((h_near - 2.0 * config.sigma_perp) / (4.0 * config.sigma_perp), 0.0, 1.0)
     f_active_vec[:, 2] *= z_blend
-    # Renormalize xy to maintain force magnitude
-    xy_mag = np.linalg.norm(f_active_vec[:, :2], axis=1, keepdims=True)
-    xy_mag = np.maximum(xy_mag, EPS)
-    desired_mag = config.F_active
-    f_active_vec[:, :2] *= desired_mag / xy_mag * np.linalg.norm(vert_normals[near_idx, :2], axis=1, keepdims=True)
+    # Renormalize to maintain force magnitude F_active
+    f_mag = np.linalg.norm(f_active_vec, axis=1, keepdims=True)
+    f_mag = np.maximum(f_mag, EPS)
+    f_active_vec *= config.F_active / f_mag
     forces[near_idx] += f_active_vec
 
-    # Balance: distribute -net force across ALL vertices
-    net_force = forces.sum(axis=0)
-    forces -= net_force / N
+    # No global balance — for a centered symmetric cell, the net active force
+    # is near zero by symmetry. Any residual is handled by the integrator's
+    # COM displacement cap. Global balancing was pulling top vertices inward,
+    # creating an unphysical concave waist.
 
     return forces
 
@@ -716,10 +714,32 @@ def steric_substrate_repulsion(cell_vertices, sub_vertices, sub_faces,
     return forces
 
 
-def steric_nucleus_in_cell(nuc_vertices, cell_center, cell_radius, config):
-    """Keep nucleus vertices inside cell membrane (approximate with sphere)."""
-    return steric_sphere_confinement(nuc_vertices, cell_center, cell_radius,
-                                     inside=True, config=config)
+def steric_nucleus_in_cell(nuc_vertices, cell_vertices, config):
+    """Keep nucleus vertices inside cell membrane using directional radius."""
+    N = len(nuc_vertices)
+    forces = np.zeros((N, 3), dtype=float)
+    cell_center = cell_vertices.mean(axis=0)
+    cell_rel = cell_vertices - cell_center  # (N_cv, 3)
+
+    nuc_rel = nuc_vertices - cell_center
+    nuc_dist = np.linalg.norm(nuc_rel, axis=1, keepdims=True)
+    nuc_hat = nuc_rel / np.maximum(nuc_dist, EPS)
+
+    # For each nuc vertex, find cell membrane radius in that direction
+    dots = nuc_hat @ cell_rel.T  # (N_nuc, N_cv)
+    # Maximum projection = cell radius in that direction
+    max_dots = np.max(dots, axis=1, keepdims=True)  # (N_nuc, 1)
+
+    # Push inward when nuc vertex exceeds 80% of cell radius in its direction
+    limit = max_dots * 0.80
+    penetration = nuc_dist - limit
+    mask_flat = (penetration > 0).ravel()
+    if np.any(mask_flat):
+        pen = penetration[mask_flat]
+        f_mag = -config.k_steric * pen  # (M, 1)
+        forces[mask_flat] += f_mag * nuc_hat[mask_flat]
+
+    return forces
 
 
 def gravity_force(n_vertices, config: SimConfig, strength=0.5):

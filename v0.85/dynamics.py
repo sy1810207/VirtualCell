@@ -36,7 +36,7 @@ class OverdampedLangevin:
 
         # Adaptive dt for internal deformation only
         max_internal = np.max(np.linalg.norm(internal_disp, axis=1))
-        max_disp = 0.1  # cap per vertex
+        max_disp = 0.05  # cap per vertex (smaller for stability)
         if max_internal > max_disp:
             scale_int = max_disp / max_internal
             internal_disp *= scale_int
@@ -45,9 +45,9 @@ class OverdampedLangevin:
         else:
             dt_effective = dt
 
-        # Cap COM displacement at 0.05a per step
+        # Cap COM displacement at 0.15a per step
         com_mag = np.linalg.norm(com_disp)
-        max_com = 0.05
+        max_com = 0.15
         if com_mag > max_com:
             com_disp *= max_com / com_mag
 

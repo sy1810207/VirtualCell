@@ -13,14 +13,14 @@ class SimConfig:
 
     # ── Membrane bond parameters (FENE + WCA) ──
     k_fene: float = 50.0      # FENE spring constant [kBT/a^2]
-    R_max: float = 0.55       # max extension from equilibrium [a]
+    R_max: float = 1.10       # max extension from equilibrium [a]
     r_eq_bond: float = 1.0    # equilibrium bond length [a]
     epsilon_wca: float = 1.0   # WCA repulsion depth [kBT]
     sigma_wca: float = 0.67    # WCA repulsion length [a] (= l_min)
-    l_max: float = 1.33      # max bond length for safety checks [a]
+    l_max: float = 2.10      # max bond length for safety checks [a]
     l_min: float = 0.67      # min bond length for safety checks [a]
-    kappa_curve: float = 5.0    # bending rigidity [kBT] (reduced for FENE force balance)
-    kappa_s: float = 0.1       # surface area constraint [kBT/a^4] (reduced for spreading)
+    kappa_curve: float = 1.0    # bending rigidity [kBT] (low to allow flattening)
+    kappa_s: float = 0.001     # surface area constraint [kBT/a^4] (very low for spreading)
     kappa_vol: float = 500000.0  # volume constraint [kBT] (dimensionless strain)
 
     # ── Cytoplasm / cytoskeleton (Eq.2-4) ──
@@ -42,13 +42,13 @@ class SimConfig:
     R_nucleus: float = 3.4     # nucleus radius [a]
 
     # ── ECM / substrate (Eq.6) ──
-    epsilon_ECM: float = 12.0  # adhesion LJ depth [kBT] (not in Table S1)
-    sigma_perp: float = 1.0    # adhesion LJ length [a] (not in Table S1)
-    w: float = 4.0             # groove width [a]
+    epsilon_ECM: float = 12.0  # adhesion spring constant [kBT/a²]
+    sigma_perp: float = 0.2   # target height above substrate [a]
+    w: float = 10.0            # groove width [a]
     h: float = 1.0             # groove depth [a]
 
     # ── Active force ──
-    F_active: float = 50.0     # [kBT/a]
+    F_active: float = 60.0     # [kBT/a]
 
     # ── Dynamics ──
     dt: float = 0.0005         # timestep
@@ -57,7 +57,7 @@ class SimConfig:
 
     # ── Simulation length ──
     n_steps_phase1: int = 100_000
-    n_steps_phase2: int = 100_000
+    n_steps_phase2: int = 150_000
 
     # ── Mesh resolution ──
     ico_subdiv_cell: int = 3     # icosphere subdivisions for cell (~642 verts)
@@ -72,8 +72,8 @@ class SimConfig:
     log_interval: int = 1000      # steps between log entries
 
     # ── Steric repulsion (penetration prevention) ──
-    k_steric: float = 200.0      # steric spring constant [kBT/a^2]
-    d_steric: float = 0.1        # shell thickness for steric ramp [a]
+    k_steric: float = 1000.0     # steric spring constant [kBT/a^2]
+    d_steric: float = 0.3        # shell thickness for steric ramp [a]
 
     # ── Derived quantities (computed at init) ──
     a: float = field(init=False, default=1.0)            # unit length (set from mesh)
