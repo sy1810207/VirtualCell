@@ -25,6 +25,8 @@ def main():
                         help='0=both phases, 1=phase1 only, 2=phase2 only')
     parser.add_argument('--groove-depth', type=float, default=1.0,
                         help='Groove depth h in units of a')
+    parser.add_argument('--groove-width', type=float, default=7.0,
+                        help='Groove half-period w in units of a (period = 2w)')
     parser.add_argument('--steps1', type=int, default=100000,
                         help='Number of steps for Phase 1')
     parser.add_argument('--steps2', type=int, default=150000,
@@ -39,13 +41,37 @@ def main():
                         help='Initial cell Y coordinate for Phase 2')
     parser.add_argument('--output-dir', type=str, default='.',
                         help='Output directory for checkpoints and HTML')
+    parser.add_argument('--substrate-stiffness', type=float, default=40.0,
+                        help='Substrate stiffness [kPa] for YAP signaling module')
+    parser.add_argument('--no-signaling', action='store_true',
+                        help='Disable YAP/TAZ signaling module')
+    parser.add_argument('--beta-groove', type=float, default=1.0,
+                        help='Y-component multiplier for active-force anisotropy '
+                             '(1.0 = isotropic, >1 biases spreading along groove axis)')
+    parser.add_argument('--kappa-linc', type=float, default=0.0,
+                        help='LINC spring base stiffness [kBT/a^2] (0 = disabled)')
+    parser.add_argument('--beta-linc', type=float, default=2.0,
+                        help='LINC Y-component stiffness multiplier')
+    parser.add_argument('--n-linc-bonds', type=int, default=20,
+                        help='Target number of LINC anchor pairs on nucleus apex')
+    parser.add_argument('--linc-activation-step', type=int, default=10000,
+                        help='Phase 2 step at which LINC bonds are generated '
+                             '(allows cell to spread first so pairs can form)')
     args = parser.parse_args()
 
     config = SimConfig(
         h=args.groove_depth,
+        w=args.groove_width,
         n_steps_phase1=args.steps1,
         n_steps_phase2=args.steps2,
         dt=args.dt,
+        E_substrate_kPa=args.substrate_stiffness,
+        enable_signaling=not args.no_signaling,
+        beta_groove=args.beta_groove,
+        kappa_linc=args.kappa_linc,
+        beta_linc=args.beta_linc,
+        n_linc_bonds=args.n_linc_bonds,
+        linc_activation_step=args.linc_activation_step,
     )
 
     sim = VirtualCellSimulation(

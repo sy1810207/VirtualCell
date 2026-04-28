@@ -44,11 +44,19 @@ class SimConfig:
     # ── ECM / substrate (Eq.6) ──
     epsilon_ECM: float = 12.0  # adhesion spring constant [kBT/a²]
     sigma_perp: float = 0.2   # target height above substrate [a]
-    w: float = 6.0             # groove width [a]
+    w: float = 7.0             # groove width [a]6 to 7
     h: float = 1.0             # groove depth [a]
 
     # ── Active force ──
     F_active: float = 60.0     # [kBT/a]
+    beta_groove: float = 1.0   # Y-component multiplier for contact-guided anisotropy (1.0 = isotropic)
+
+    # ── LINC complex (nesprin/SUN) ──
+    kappa_linc: float = 0.0    # LINC spring base stiffness [kBT/α²] (0 → disabled)
+    beta_linc: float = 2.0     # Y-component stiffness multiplier (stress-fiber anisotropy)
+    n_linc_bonds: int = 20     # Target number of LINC anchors on nucleus apex
+    linc_activation_step: int = 10000  # Phase 2 step at which LINC bonds are generated
+                                        # (cell is partially spread by then, pairs can form)
 
     # ── Dynamics ──
     dt: float = 0.0005         # timestep
@@ -65,6 +73,11 @@ class SimConfig:
     # Nucleus uses level 1 so edge length ≈ cell's edge length a
     # (paper uses same membrane parameters for both; edges must be same scale)
     n_cyt_points: int = 600      # target cytoplasm interior points
+
+    # ── Signaling module ──
+    E_substrate_kPa: float = 40.0       # substrate stiffness [kPa]
+    enable_signaling: bool = True       # enable YAP/TAZ signaling module
+    signaling_interval: int = 5000      # steps between signaling evaluations
 
     # ── Monitoring ──
     check_interval: int = 500     # steps between safety checks
@@ -117,6 +130,7 @@ class SimConfig:
         self.kappa_bonding_ch /= a_actual**2
         self.k_steric /= a_actual**2
         self.k_fene /= a_actual**2
+        self.kappa_linc /= a_actual**2
         # F_active [kBT/a] → divide by a
         self.F_active /= a_actual
         self._scaled = True

@@ -12,7 +12,7 @@ from forces import (membrane_forces, cytoplasm_forces, chromatin_forces,
                     cell_ecm_forces, active_forces,
                     steric_sphere_confinement, steric_substrate_repulsion,
                     steric_nucleus_in_cell, gravity_force,
-                    volume_constraint_forces)
+                    volume_constraint_forces, linc_forces)
 from scipy.spatial import cKDTree
 from dynamics import OverdampedLangevin
 from substrate import generate_grooved_substrate
@@ -38,6 +38,10 @@ class VirtualCellSimulation:
         self.sub_centroids = None
         self.sub_normals = None
         self.sub_tree_2d = None
+        # LINC bonds (initialized in run_phase2 if kappa_linc > 0)
+        self.linc_cell_idx = None
+        self.linc_nuc_idx = None
+        self.linc_eq_lengths = None
 
         self._init_meshes()
         self.logger.info('VirtualCell simulation initialized')
@@ -284,7 +288,29 @@ class VirtualCellSimulation:
             self.sub_tree_2d, cfg)
         f_nuc += f_nuc_sub
 
+        # LINC coupling: nucleus apex ↔ cell membrane (F-actin-modulated)
+        if cfg.kappa_linc > 0.0 and self.linc_cell_idx is not None \
+                and len(self.linc_cell_idx) > 0:
+            myo_act = self._linc_myo_activation()
+            f_linc_cell, f_linc_nuc = linc_forces(
+                self.cell_vertices, self.nuc_vertices,
+                self.linc_cell_idx, self.linc_nuc_idx, self.linc_eq_lengths,
+                cfg, myo_act)
+            f_cell += f_linc_cell
+            f_nuc += f_linc_nuc
+
         return f_cell, f_nuc, f_cyt, f_chains, total_energy
+
+    def _linc_myo_activation(self):
+        """Current myosin activation for LINC stiffness modulation.
+        Priority: latest signaling Myo_A; fallback: contact-node fraction."""
+        if hasattr(self, '_signaling_history') and len(self._signaling_history) > 0:
+            return float(self._signaling_history[-1].get('Myo_A', 0.5))
+        if self.sub_centroids is not None:
+            _, near = self.sub_tree_2d.query(self.cell_vertices[:, :2], k=1)
+            z_diff = self.cell_vertices[:, 2] - self.sub_centroids[near, 2]
+            return float(np.mean(z_diff < 3.0 * self.cfg.a))
+        return 0.0
 
     @staticmethod
     def _directional_confinement(positions, cell_vertices, cfg, fraction=0.90):
@@ -702,16 +728,40 @@ class VirtualCellSimulation:
         log.info(f'  Cell placed at x={final_center[0]:.2f}, '
                  f'y={final_center[1]:.2f}, z={final_center[2]:.2f}')
 
+        if cfg.kappa_linc > 0.0:
+            log.info(f'  LINC enabled: κ_linc={cfg.kappa_linc:.3g}, '
+                     f'β_linc={cfg.beta_linc:.2f}, target {cfg.n_linc_bonds} pairs, '
+                     f'activation at step {cfg.linc_activation_step}')
+
         # Reset integrator
         self.integrator.reset_dt()
         self.should_stop = False
 
+        if cfg.enable_signaling:
+            from signaling import YAPSignalingModule, extract_geometric_features
+            signaling_module = YAPSignalingModule(cfg, E_substrate_kPa=cfg.E_substrate_kPa)
+            self._signaling_history = []
+
         vis = RealtimeVisualizer(enabled=self.realtime_vis)
+        energy = 0.0
 
         for step in range(cfg.n_steps_phase2):
             if self.should_stop or vis.stopped:
                 log.info(f'Phase 2 stopped by user at step {step}')
                 break
+
+            # Deferred LINC activation: generate bonds once cell has spread
+            if (cfg.kappa_linc > 0.0 and self.linc_cell_idx is None
+                    and step >= cfg.linc_activation_step):
+                from mesh import generate_linc_bonds
+                self.linc_cell_idx, self.linc_nuc_idx, self.linc_eq_lengths = \
+                    generate_linc_bonds(self.cell_vertices, self.nuc_vertices, cfg)
+                n_pairs = len(self.linc_cell_idx)
+                if n_pairs < cfg.n_linc_bonds:
+                    log.warning(f'  LINC bonds: only {n_pairs}/{cfg.n_linc_bonds} pairs '
+                                f'found at step {step} (search radius 3a={3*cfg.a:.2f})')
+                else:
+                    log.info(f'  LINC bonds: {n_pairs} pairs generated at step {step}')
 
             # Compute forces
             f_cell, f_nuc, f_cyt, f_chains, energy = self._compute_forces_phase2()
@@ -729,6 +779,13 @@ class VirtualCellSimulation:
                 # Additional Phase 2 checks: penetration
                 self._check_penetration(step)
 
+            # YAP/TAZ signaling evaluation
+            if cfg.enable_signaling and step % cfg.signaling_interval == 0 and step > 0:
+                features = extract_geometric_features(self)
+                result = signaling_module.compute(features)
+                log.info(f'[Signal] Step {step}: ' + signaling_module.summary_str(result))
+                self._signaling_history.append({'step': step, **result})
+
             # Real-time visualization
             if step % cfg.vis_interval == 0:
                 vis.update(self.cell_vertices, self.cell_faces,
@@ -737,6 +794,18 @@ class VirtualCellSimulation:
                            sub_vertices=self.sub_vertices,
                            sub_faces=self.sub_faces,
                            phase='Phase 2')
+
+        # Save signaling results
+        if cfg.enable_signaling and hasattr(self, '_signaling_history'):
+            import json
+            from datetime import datetime
+            sig_dir = os.path.join(self.output_dir, 'signaling')
+            os.makedirs(sig_dir, exist_ok=True)
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            sig_path = os.path.join(sig_dir, f'signaling_results_{timestamp}.json')
+            with open(sig_path, 'w') as f:
+                json.dump(self._signaling_history, f, indent=2)
+            log.info(f'Signaling results saved: {sig_path}')
 
         # Compute contact probability
         P = contact_probability_matrix(self.chains, cfg)

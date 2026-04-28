@@ -6,21 +6,23 @@ import numpy as np
 from config import SimConfig
 
 
-def generate_grooved_substrate(config: SimConfig, n_periods=8, ny=10):
+def generate_grooved_substrate(config: SimConfig, n_periods=8, ny=10, nx_per_period=16):
     """
-    Generate a rigid grooved substrate with trapezoidal cross-section.
+    Generate a rigid grooved substrate with sinusoidal cross-section.
 
     Geometry (cross-section in xz-plane, grooves run along y):
-      - Ridge top at z = 0, width = w_top
-      - Sloped walls (trapezoid angle)
-      - Groove floor at z = -h, width = w_floor
-      - Period = 2w (one ridge + one groove, measured at top)
+      z(x) = -(h/2) * (1 - cos(2π (x - x_start) / period)),  period = 2w
+      - Peaks (ridge tops) at z = 0, spaced every 2w in x
+      - Troughs (groove floors) at z = -h, located mid-period
+      - Smooth sinusoidal walls (no flat ridge/floor)
+      - Invariant along y
 
     Parameters
     ----------
     config : SimConfig
     n_periods : int — number of groove periods
     ny : int — number of subdivisions along y-axis
+    nx_per_period : int — number of x-subdivisions per period (mesh resolution)
 
     Returns
     -------
@@ -31,74 +33,37 @@ def generate_grooved_substrate(config: SimConfig, n_periods=8, ny=10):
     h = config.h
     R = config.R_cell
 
-    # Trapezoid slope: walls at ~60° from horizontal
-    # slope_dx = horizontal offset from top edge to bottom edge
-    slope_dx = h * 0.4  # controls wall angle (smaller = steeper)
-
-    # y extent: cover cell diameter with margin
-    y_min = -R * 1.5
-    y_max = R * 1.5
-    ys = np.linspace(y_min, y_max, ny + 1)
-
-    # x extent: n_periods full periods, centered at 0
     period = 2.0 * w
     x_total = n_periods * period
     x_start = -x_total / 2.0
 
-    vertices = []
+    y_min = -R * 1.5
+    y_max = R * 1.5
+    ys = np.linspace(y_min, y_max, ny + 1)
+
+    total_nx = n_periods * nx_per_period
+    xs = np.linspace(x_start, x_start + x_total, total_nx + 1)
+    if h > 1e-6:
+        zs = -(h / 2.0) * (1.0 - np.cos(2.0 * np.pi * (xs - x_start) / period))
+    else:
+        zs = np.zeros_like(xs)
+
+    X, Y = np.meshgrid(xs, ys)
+    Z = np.broadcast_to(zs, X.shape)
+    vertices = np.stack([X.ravel(), Y.ravel(), Z.ravel()], axis=1).astype(float)
+
+    nx1 = total_nx + 1
     faces = []
-
-    def add_vertex(x, y, z):
-        idx = len(vertices)
-        vertices.append([x, y, z])
-        return idx
-
-    def add_quad(a, b, c, d):
-        """Add two triangles for a quad (a,b,c,d) in CCW order."""
-        faces.append([a, b, c])
-        faces.append([a, c, d])
-
-    # For each y-strip between ys[j] and ys[j+1]
     for j in range(ny):
-        y0 = ys[j]
-        y1 = ys[j + 1]
+        for i in range(total_nx):
+            a = j * nx1 + i
+            b = j * nx1 + (i + 1)
+            c = (j + 1) * nx1 + (i + 1)
+            d = (j + 1) * nx1 + i
+            faces.append([a, b, c])
+            faces.append([a, c, d])
 
-        for p in range(n_periods):
-            x_base = x_start + p * period
-
-            # Ridge top: x_base to x_base + w, at z = 0
-            x_r0 = x_base
-            x_r1 = x_base + w
-            a = add_vertex(x_r0, y0, 0.0)
-            b = add_vertex(x_r1, y0, 0.0)
-            c = add_vertex(x_r1, y1, 0.0)
-            d = add_vertex(x_r0, y1, 0.0)
-            add_quad(a, b, c, d)
-
-            if h > 1e-6:
-                # Left slope: from (x_r1, z=0) down to (x_r1 + slope_dx, z=-h)
-                x_left_bot = x_r1 + slope_dx
-                e = add_vertex(x_left_bot, y0, -h)
-                f = add_vertex(x_left_bot, y1, -h)
-                add_quad(b, e, f, c)
-
-                # Groove floor: from x_left_bot to x_right_bot at z=-h
-                x_g1 = x_base + 2 * w  # top edge of right slope
-                x_right_bot = x_g1 - slope_dx
-                # Ensure floor width is positive
-                x_right_bot = max(x_right_bot, x_left_bot + 0.1 * w)
-                g = add_vertex(x_right_bot, y0, -h)
-                hv = add_vertex(x_right_bot, y1, -h)
-                add_quad(e, g, hv, f)
-
-                # Right slope: from (x_right_bot, z=-h) up to (x_g1, z=0)
-                i = add_vertex(x_g1, y0, 0.0)
-                jv = add_vertex(x_g1, y1, 0.0)
-                add_quad(g, i, jv, hv)
-
-    vertices = np.array(vertices, dtype=float)
-    faces = np.array(faces, dtype=int)
-    return vertices, faces
+    return vertices, np.array(faces, dtype=int)
 
 
 def generate_flat_substrate(config: SimConfig, nx=20, ny=20):

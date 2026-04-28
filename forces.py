@@ -636,6 +636,12 @@ def active_forces(cell_vertices, cell_faces, sub_centroids, sub_normals,
     f_mag = np.linalg.norm(f_active_vec, axis=1, keepdims=True)
     f_mag = np.maximum(f_mag, EPS)
     f_active_vec *= config.F_active / f_mag
+
+    # Contact-guidance anisotropy: bias Y-component (groove axis) without
+    # touching X/Z — equivalent to oriented stress-fiber bundles along grooves.
+    if config.beta_groove != 1.0:
+        f_active_vec[:, 1] *= config.beta_groove
+
     forces[near_idx] += f_active_vec
 
     return forces
@@ -742,3 +748,58 @@ def gravity_force(n_vertices, config: SimConfig, strength=0.5):
     forces = np.zeros((n_vertices, 3), dtype=float)
     forces[:, 2] = -strength * config.kBT
     return forces
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  7. LINC complex (nucleus apex ↔ cell membrane) — anisotropic
+# ═══════════════════════════════════════════════════════════════════
+
+def linc_forces(cell_vertices, nuc_vertices,
+                linc_cell_idx, linc_nuc_idx, linc_eq_lengths,
+                config: SimConfig, myo_activation: float):
+    """
+    Directional LINC bonds coupling perinuclear actin cap (nucleus apex) to the
+    cell membrane. Harmonic spring along the bond with Y-component enhanced by
+    beta_linc (stress-fiber anisotropy along groove axis). Effective stiffness
+    scales with F-actin/myosin activation: k_eff = kappa_linc * myo_activation / 0.5.
+
+    Parameters
+    ----------
+    myo_activation : float — normalized myosin activation in [0, 1]
+                             (Myo_A from signaling, or contact-node fraction proxy)
+
+    Returns
+    -------
+    f_cell : (N_cv, 3) — forces added to cell membrane vertices
+    f_nuc  : (N_nv, 3) — forces added to nucleus vertices (Newton's 3rd law)
+    """
+    N_cv = len(cell_vertices)
+    N_nv = len(nuc_vertices)
+    f_cell = np.zeros((N_cv, 3), dtype=float)
+    f_nuc = np.zeros((N_nv, 3), dtype=float)
+
+    if len(linc_cell_idx) == 0 or config.kappa_linc <= 0.0:
+        return f_cell, f_nuc
+
+    # Effective stiffness: scales with myosin activation (Myo_A_ref = 0.5)
+    k_eff = config.kappa_linc * (myo_activation / 0.5)
+
+    dr = cell_vertices[linc_cell_idx] - nuc_vertices[linc_nuc_idx]  # (N_linc, 3)
+    length = np.linalg.norm(dr, axis=1)
+    length_safe = np.maximum(length, EPS)
+    dr_hat = dr / length_safe[:, None]
+
+    # Spring force on cell end: -k * (|dr| - l_eq) * dr_hat
+    extension = length - linc_eq_lengths
+    f_on_cell = -k_eff * extension[:, None] * dr_hat
+
+    # Y-axis anisotropy (stress-fiber alignment along groove)
+    f_on_cell[:, 1] *= config.beta_linc
+
+    # Newton's 3rd law on nucleus side
+    f_on_nuc = -f_on_cell
+
+    np.add.at(f_cell, linc_cell_idx, f_on_cell)
+    np.add.at(f_nuc, linc_nuc_idx, f_on_nuc)
+
+    return f_cell, f_nuc

@@ -3,7 +3,7 @@ VirtualCell v0.85 — Mesh Generation
 Icosphere membrane, tetrahedral cytoplasm, chromatin bead-spring chains.
 """
 import numpy as np
-from scipy.spatial import Delaunay
+from scipy.spatial import Delaunay, cKDTree
 from config import SimConfig
 
 
@@ -237,3 +237,56 @@ def _random_point_in_sphere(R, rng):
         p = rng.uniform(-R, R, size=3)
         if np.linalg.norm(p) < R:
             return p
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  LINC bonds (nucleus apex ↔ cell membrane)
+# ═══════════════════════════════════════════════════════════════════
+
+def generate_linc_bonds(cell_vertices, nuc_vertices, config: SimConfig):
+    """
+    Build LINC anchor pairs between the upper hemisphere of the nuclear
+    envelope (perinuclear actin cap region) and their nearest cell-membrane
+    vertices within a biological search radius.
+
+    Parameters
+    ----------
+    cell_vertices : (N_c, 3)
+    nuc_vertices  : (N_n, 3)
+    config        : SimConfig (uses config.a and config.n_linc_bonds)
+
+    Returns
+    -------
+    linc_cell_idx  : (N_linc,) int  — cell vertex indices
+    linc_nuc_idx   : (N_linc,) int  — nucleus vertex indices
+    linc_eq_lengths: (N_linc,) float — initial pair distances (equilibrium)
+    """
+    nuc_cm_z = float(nuc_vertices[:, 2].mean())
+    upper_mask = nuc_vertices[:, 2] > nuc_cm_z
+    upper_idx = np.where(upper_mask)[0]
+
+    if len(upper_idx) == 0:
+        return (np.zeros(0, dtype=int), np.zeros(0, dtype=int),
+                np.zeros(0, dtype=float))
+
+    search_radius = 3.0 * config.a
+    cell_tree = cKDTree(cell_vertices)
+
+    pairs = []
+    for nj in upper_idx:
+        d, ci = cell_tree.query(nuc_vertices[nj], k=1,
+                                 distance_upper_bound=search_radius)
+        if np.isfinite(d) and ci < len(cell_vertices):
+            pairs.append((d, int(ci), int(nj)))
+
+    pairs.sort(key=lambda t: t[0])
+    pairs = pairs[:config.n_linc_bonds]
+
+    if len(pairs) == 0:
+        return (np.zeros(0, dtype=int), np.zeros(0, dtype=int),
+                np.zeros(0, dtype=float))
+
+    linc_eq_lengths = np.array([p[0] for p in pairs], dtype=float)
+    linc_cell_idx = np.array([p[1] for p in pairs], dtype=int)
+    linc_nuc_idx = np.array([p[2] for p in pairs], dtype=int)
+    return linc_cell_idx, linc_nuc_idx, linc_eq_lengths
